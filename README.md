@@ -8,3 +8,4 @@ This example shows how to implement a **REST API with TypeScript** using [Expres
 `docker compose up -d`
 `pnpm prisma migrate reset`
 `pnpm run dev`
+`curl http://localhost:3000/users/getall`
