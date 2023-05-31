@@ -1,36 +1,59 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["jsonProtocol", "postgresqlExtensions"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://admin:password123@127.0.0.1:6500/node_prisma?schema=public"
+  url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]  @relation("AuthorOfPost")
+model FamilyTree {
+  id              String       @id(map: "trees_pkey") @db.Uuid
+  name            String
+  slug            String       @unique
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  defaultPivotId  String?      @db.Uuid
+  shareKey        String?      @unique
+  currentPivotId  String?      @db.Uuid
+  screenshot      String?
+  currentPivot    Person?      @relation("CurrentPivot", fields: [currentPivotId], references: [id])
+  defaultPivot    Person?      @relation("DefautPivot", fields: [defaultPivotId], references: [id])
+  PersonTree      PersonTree[]
+  access          TreeAccess[]
+  files           File[]
+  changes         Change[]     @relation("InTree")
+  currentChange   Change?      @relation("CurrentChange", fields: [currentChangeId], references: [id])
+  currentChangeId String?      @db.Uuid
+  sources         Source[]
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  viewCount Int      @default(0)
-  author    User?    @relation("AuthorOfPost", fields: [authorId], references: [id])
-  authorId  Int?
-  comments  Comment[]
+model Source {
+  id          String        @id(map: "sources_pkey") @db.Uuid
+  name        String
+  url         String?
+  description String?
+  authorId    String        @db.Uuid
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  treeId      String        @db.Uuid
+  tree        FamilyTree    @relation(fields: [treeId], references: [id], onDelete: Cascade)
+  canonicalId String?
+  deleted     Boolean       @default(false)
+  createdBy   Profile       @relation(fields: [authorId], references: [id])
+  EventSource EventSource[]
 }
 
-model Comment {
-  id     Int     @id @default(autoincrement())
-  text   String
-  post   Post?   @relation(fields: [postId], references: [id])
-  postId Int?
+model Change {
+  id                   String       @id(map: "changes_pkey") @db.Uuid
+  commandName          String
+  entityId             String?
+  profile              Profile?     @relation(fields: [profileId], references: [id], onDelete: SetNull)
+  profileId            String?      @db.Uuid
+  treeId               String?      @db.Uuid
+  tree                 FamilyTree?  @relation("InTree", fields: [treeId], references: [id], onDelete: Cascade)
+  data                 String       @default("{}")
+  createdAt            DateTime     @default(now())
+  currentChangeInTrees FamilyTree[] @relation("CurrentChange")
 }
