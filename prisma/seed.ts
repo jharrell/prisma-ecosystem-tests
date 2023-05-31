@@ -2,66 +2,32 @@ import { PrismaClient, Prisma } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-const userData: Prisma.UserCreateInput[] = [
+const userData: Prisma.SourceCreateInput[] = [
   {
-    name: 'Alice',
-    email: 'alice@prisma.io',
-    posts: {
-      create: [
-        {
-          title: 'Join the Prisma Slack',
-          content: 'https://slack.prisma.io',
-          published: true,
-        },
-      ],
-    },
-  },
-  {
-    name: 'Nilu',
-    email: 'nilu@prisma.io',
-    posts: {
-      create: [
-        {
-          title: 'Follow Prisma on Twitter',
-          content: 'https://www.twitter.com/prisma',
-          published: true,
-        },
-      ],
-    },
-  },
-  {
-    name: 'Mahmoud',
-    email: 'mahmoud@prisma.io',
-    posts: {
-      create: [
-        {
-          title: 'Ask a question about Prisma on GitHub',
-          content: 'https://www.github.com/prisma/prisma/discussions',
-          published: true,
-          comments: {
-            create: [
-              {
-                text: 'Please help me! I want to learn Prisma.',
-              },
-              {
-                text: 'I also would like to learn! I\'ll head to GitHub.',
-              },
-            ],
+    id: '530753ff-ff5e-4542-bc17-a32438b7b5e3',
+    name: 'Foo',
+    authorId: '530753ff-ff5e-4542-bc17-a32438b7b5e3',
+    tree: {
+      create: {
+        id: '530753ff-ff5e-4542-bc17-a32438b7b5e3',
+        name: 'Family Foo',
+        slug: 'family-foo',
+        currentChange: {
+          create: {
+            id: '530753ff-ff5e-4542-bc17-a32438b7b5e3',
+            commandName: 'command foo',
+            data: '{ foo: "foo" }'
           }
-        },
-        {
-          title: 'Prisma on YouTube',
-          content: 'https://pris.ly/youtube',
-        },
-      ],
-    },
-  },
+        }
+      }
+    }
+  }
 ]
 
 async function main() {
   console.log('Start seeding ...')
   for (const u of userData) {
-    const user = await prisma.user.create({
+    const user = await prisma.source.create({
       data: u,
     })
     console.log(`Created user with id: ${user.id}`)
