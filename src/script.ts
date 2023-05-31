@@ -9,7 +9,7 @@ async function main() {
     },
     include: { tree: { include: { currentChange: true } } },
   });
-  console.log("result")
+  console.log("result", result)
 }
 
 main()
