@@ -18,11 +18,11 @@ model FamilyTree {
   shareKey        String?      @unique
   currentPivotId  String?      @db.Uuid
   screenshot      String?
-  currentPivot    Person?      @relation("CurrentPivot", fields: [currentPivotId], references: [id])
-  defaultPivot    Person?      @relation("DefautPivot", fields: [defaultPivotId], references: [id])
-  PersonTree      PersonTree[]
-  access          TreeAccess[]
-  files           File[]
+  // currentPivot    Person?      @relation("CurrentPivot", fields: [currentPivotId], references: [id])
+  // defaultPivot    Person?      @relation("DefautPivot", fields: [defaultPivotId], references: [id])
+  // PersonTree      PersonTree[]
+  // access          TreeAccess[]
+  // files           File[]
   changes         Change[]     @relation("InTree")
   currentChange   Change?      @relation("CurrentChange", fields: [currentChangeId], references: [id])
   currentChangeId String?      @db.Uuid
@@ -41,15 +41,15 @@ model Source {
   tree        FamilyTree    @relation(fields: [treeId], references: [id], onDelete: Cascade)
   canonicalId String?
   deleted     Boolean       @default(false)
-  createdBy   Profile       @relation(fields: [authorId], references: [id])
-  EventSource EventSource[]
+  // createdBy   Profile       @relation(fields: [authorId], references: [id])
+  // EventSource EventSource[]
 }
 
 model Change {
   id                   String       @id(map: "changes_pkey") @db.Uuid
   commandName          String
   entityId             String?
-  profile              Profile?     @relation(fields: [profileId], references: [id], onDelete: SetNull)
+  // profile              Profile?     @relation(fields: [profileId], references: [id], onDelete: SetNull)
   profileId            String?      @db.Uuid
   treeId               String?      @db.Uuid
   tree                 FamilyTree?  @relation("InTree", fields: [treeId], references: [id], onDelete: Cascade)
